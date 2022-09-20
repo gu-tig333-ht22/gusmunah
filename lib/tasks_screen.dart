@@ -1,7 +1,5 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
-import 'package:test/Widgets/todoitems.dart';
+import './todoitems.dart';
 
 class TasksScreen extends StatelessWidget {
   get fontsize => null;
@@ -41,12 +39,13 @@ class TasksScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: ListView.builder(
-            itemBuilder: (context, index) {
-              return TodoItem();
-            },
-            itemCount: 6,
-          ))
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                return TodoItem();
+              },
+              itemCount: 6,
+            ),
+          )
         ],
       ),
     );
