@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:todoapp/variables.dart';
 
-import 'main.dart';
+import 'HomeScreen.dart';
+import 'Model.dart';
 
 class AddTask extends StatefulWidget {
   TodoList list = TodoList();
@@ -12,21 +14,24 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
-  // final TodoList list = TodoList();
-  final LocalStorage storage = LocalStorage('todo_app.json');
-
-  TextEditingController controller = TextEditingController();
   void _save() {
     setState(() {
-      _addItem(controller.value.text);
-    });
-    const snackBar = SnackBar(
-      content: Text('Task Added Successfully'),
-    );
+      if (controller.value.text.isNotEmpty) {
+        _addItem(controller.value.text);
+        const snackBar = SnackBar(
+          content: Text('Task Added Successfully'),
+        );
 
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        const snackBar = SnackBar(
+          content: Text('Please enter the any task'),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    });
+
     controller.clear();
   }
 
@@ -69,11 +74,11 @@ class _AddTaskState extends State<AddTask> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()));
-                         // Navigator.pop(context);
+                                  builder: (context) => const HomePage()));
+                          // Navigator.pop(context);
                         },
-                        child: Icon(Icons.arrow_back_ios)),
-                    Text(
+                        child: const Icon(Icons.arrow_back_ios)),
+                    const Text(
                       'TIG169 TODO',
                       style: TextStyle(
                         fontSize: 30,
@@ -81,7 +86,7 @@ class _AddTaskState extends State<AddTask> {
                         color: Colors.black,
                       ),
                     ),
-                    Text(''),
+                    const Text(''),
                   ],
                 ),
               ),
@@ -107,12 +112,10 @@ class _AddTaskState extends State<AddTask> {
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  _save();
-                });
+                _save();
               },
               child: Container(
-                margin: EdgeInsets.only(left: 140, top: 40),
+                margin: const EdgeInsets.only(left: 140, top: 40),
                 child: Center(
                   child: Row(
                     children: const [
