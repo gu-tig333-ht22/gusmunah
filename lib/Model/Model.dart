@@ -1,14 +1,15 @@
 class TodoItem {
+  String id;
   String title;
   bool done;
 
-  TodoItem({required this.title, required this.done});
+  TodoItem({required this.title, required this.done,required this.id});
 
   toJSONEncodable() {
     Map<String, dynamic> m = Map();
-
     m['title'] = title;
     m['done'] = done;
+    m['id'] = id;
 
     return m;
   }

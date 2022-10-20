@@ -1,24 +1,41 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:todoapp/variables.dart';
+import 'package:provider/provider.dart';
+import 'package:todoapp/APIController.dart';
+import 'package:todoapp/Controller/ListController.dart';
 
-import 'HomeScreen.dart';
-import 'Model.dart';
+import 'Component/my_text_field.dart';
+import 'Model/Model.dart';
+import 'Component/component.dart';
 
 class AddTask extends StatefulWidget {
   TodoList list = TodoList();
-  AddTask(this.list, {Key? key}) : super(key: key);
+  AddTask({Key? key}) : super(key: key);
 
   @override
   State<AddTask> createState() => _AddTaskState();
 }
 
 class _AddTaskState extends State<AddTask> {
-  void _save() {
-    setState(() {
+  final LocalStorage storage = LocalStorage('todo_app.json');
+  TextEditingController controller = TextEditingController();
+
+  _addItem(String title) {
+    var listcontroller = Provider.of<ListController>(context, listen: false);
+    final item = TodoItem(title: title, done: false, id: "");
+    listcontroller.addItem(item);
+  }
+
+  void _save(BuildContext context) async {
+    try {
       if (controller.value.text.isNotEmpty) {
+        await Provider.of<APIController>(context, listen: false).addTask(
+            "todos", {'title': controller.value.text, 'done': false}, context);
         _addItem(controller.value.text);
         const snackBar = SnackBar(
+          backgroundColor: Colors.green,
           content: Text('Task Added Successfully'),
         );
 
@@ -30,113 +47,99 @@ class _AddTaskState extends State<AddTask> {
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
-    });
-
-    controller.clear();
-  }
-
-  _addItem(String title) {
-    setState(() {
-      final item = TodoItem(title: title, done: false);
-      list.items.add(item);
-      _saveToStorage();
-    });
-  }
-
-  _saveToStorage() {
-    setState(() {
-      storage.setItem('todos', list.toJSONEncodable());
-    });
+    } catch (e) {
+      log(e.toString());
+      controller.clear();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            Container(
-              color: Colors.grey,
-              height: 56,
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                margin: const EdgeInsets.only(left: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomePage()));
-                          // Navigator.pop(context);
-                        },
-                        child: const Icon(Icons.arrow_back_ios)),
-                    const Text(
-                      'TIG169 TODO',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontStyle: FontStyle.normal,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const Text(''),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Colors.black,
-                ),
-              ),
-              child: Container(
-                margin: const EdgeInsets.only(left: 20),
-                child: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    labelText: 'What to do?',
-                  ),
-                  onEditingComplete: _save,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                _save();
-              },
-              child: Container(
-                margin: const EdgeInsets.only(left: 140, top: 40),
-                child: Center(
+    double HEIGHT = MediaQuery.of(context).size.height;
+    double WIDTH = MediaQuery.of(context).size.width;
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                color: primaryColor,
+                height: 56,
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  margin: const EdgeInsets.only(left: 20),
                   child: Row(
-                    children: const [
-                      Icon(
-                        Icons.add,
-                        size: 30,
-                        color: Colors.black,
-                      ),
-                      Text(
-                        'ADD',
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => const HomePage()));
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          )),
+                      const Text(
+                        'TIG169 TODO',
                         style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
-                      )
+                          fontSize: 30,
+                          fontStyle: FontStyle.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Text(''),
                     ],
                   ),
                 ),
               ),
-            )
-          ],
+              SizedBox(
+                height: HEIGHT * 0.05,
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 20),
+                child: TextField(
+                  controller: controller,
+                  decoration: decoration.copyWith(labelText: "What to do?"),
+                  onEditingComplete: () {
+                    //_save(context);
+                  },
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  _save(context);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(left: 140, top: 40),
+                  child: Center(
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.add,
+                          size: 30,
+                          color: Colors.black,
+                        ),
+                        Text(
+                          'ADD',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

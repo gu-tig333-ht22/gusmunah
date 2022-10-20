@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
-
-import 'package:localstorage/localstorage.dart';
-import 'package:todoapp/AddTask.dart';
-
+import 'package:provider/provider.dart';
+import 'package:todoapp/APIController.dart';
+import 'package:todoapp/Controller/ListController.dart';
 import 'HomeScreen.dart';
-import 'Model.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TODO App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=>APIController()),
+        ChangeNotifierProvider(create: (_)=>ListController())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'TODO App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
       ),
-      home: HomePage(),
     );
   }
 }
