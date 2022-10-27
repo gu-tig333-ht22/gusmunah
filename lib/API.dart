@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todoapp/API/myapi.dart';
 
-class APIController extends ChangeNotifier{
+class API {
   final _myApi=MyApi();
-  final apiKey="cf1a8f62-82f2-4dde-aac1-57d7c4048bf8";
+  final apiKey="0160bd86-6528-4059-bbab-28469bd90fc1";
 
   Future<void> addTask(String url,dynamic body,BuildContext context)async{
     log(url);
@@ -26,6 +26,7 @@ class APIController extends ChangeNotifier{
       throw Exception(e);
     }
   }
+
   Future<dynamic> getTask(String url,BuildContext context)async{
     log(url);
     try {
@@ -42,7 +43,7 @@ class APIController extends ChangeNotifier{
       }
     } catch (e) {
       log(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Container(child: Text("Unable to add task",style: TextStyle(color: Colors.white),),),backgroundColor: Colors.red,));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Container(child: Text("Unable to get task",style: TextStyle(color: Colors.white),),),backgroundColor: Colors.red,));
       throw Exception(e);
     }
   }

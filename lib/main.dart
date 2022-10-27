@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todoapp/APIController.dart';
+import 'package:todoapp/API.dart';
 import 'package:todoapp/Controller/ListController.dart';
 import 'HomeScreen.dart';
 
@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_)=>APIController()),
         ChangeNotifierProvider(create: (_)=>ListController())
       ],
       child: MaterialApp(

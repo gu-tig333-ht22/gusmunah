@@ -3,10 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
-import 'package:todoapp/APIController.dart';
+import 'package:todoapp/API.dart';
 import 'package:todoapp/Controller/ListController.dart';
 
 import 'Component/my_text_field.dart';
+import 'HomeScreen.dart';
 import 'Model/Model.dart';
 import 'Component/component.dart';
 
@@ -21,18 +22,17 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   final LocalStorage storage = LocalStorage('todo_app.json');
   TextEditingController controller = TextEditingController();
+  final myApi=API();
 
   _addItem(String title) {
-    var listcontroller = Provider.of<ListController>(context, listen: false);
-    final item = TodoItem(title: title, done: false, id: "");
+    var listcontroller=Provider.of<ListController>(context,listen: false);
+    final item = TodoItem(title: title, done: false,id: "");
     listcontroller.addItem(item);
   }
-
-  void _save(BuildContext context) async {
-    try {
+  void _save(BuildContext context)async {
+    try{
       if (controller.value.text.isNotEmpty) {
-        await Provider.of<APIController>(context, listen: false).addTask(
-            "todos", {'title': controller.value.text, 'done': false}, context);
+        await myApi.addTask("todos", {'title':controller.value.text,'done':false}, context);
         _addItem(controller.value.text);
         const snackBar = SnackBar(
           backgroundColor: Colors.green,
@@ -47,16 +47,17 @@ class _AddTaskState extends State<AddTask> {
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
-    } catch (e) {
+    }catch(e){
       log(e.toString());
       controller.clear();
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    double HEIGHT = MediaQuery.of(context).size.height;
-    double WIDTH = MediaQuery.of(context).size.width;
+    double HEIGHT=MediaQuery.of(context).size.height;
+    double WIDTH=MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -81,10 +82,7 @@ class _AddTaskState extends State<AddTask> {
                             //         builder: (context) => const HomePage()));
                             Navigator.pop(context);
                           },
-                          child: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                          )),
+                          child: const Icon(Icons.arrow_back_ios,color: Colors.white,)),
                       const Text(
                         'TIG169 TODO',
                         style: TextStyle(
@@ -99,14 +97,14 @@ class _AddTaskState extends State<AddTask> {
                 ),
               ),
               SizedBox(
-                height: HEIGHT * 0.05,
+                height: HEIGHT*0.05,
               ),
               Container(
                 margin: const EdgeInsets.only(left: 20),
                 child: TextField(
                   controller: controller,
                   decoration: decoration.copyWith(labelText: "What to do?"),
-                  onEditingComplete: () {
+                  onEditingComplete: (){
                     //_save(context);
                   },
                 ),
