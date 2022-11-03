@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
-import 'package:todoapp/API.dart';
 import 'package:todoapp/Controller/ListController.dart';
 
 import 'Component/my_text_field.dart';
@@ -22,7 +21,6 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   final LocalStorage storage = LocalStorage('todo_app.json');
   TextEditingController controller = TextEditingController();
-  final myApi=API();
 
   _addItem(String title) {
     var listcontroller=Provider.of<ListController>(context,listen: false);
@@ -32,7 +30,7 @@ class _AddTaskState extends State<AddTask> {
   void _save(BuildContext context)async {
     try{
       if (controller.value.text.isNotEmpty) {
-        await myApi.addTask("todos", {'title':controller.value.text,'done':false}, context);
+        await Provider.of<ListController>(context,listen: false).addTask("todos", {'title':controller.value.text,'done':false}, context);
         _addItem(controller.value.text);
         const snackBar = SnackBar(
           backgroundColor: Colors.green,

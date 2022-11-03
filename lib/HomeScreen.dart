@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
-import 'package:todoapp/API.dart';
 import 'package:todoapp/Controller/ListController.dart';
 
 import 'AddTask.dart';
@@ -28,7 +27,6 @@ class _MyHomePageState extends State<HomePage> {
   bool initialized = false;
   TextEditingController controller = TextEditingController();
   AsyncMemoizer asyncMemoizer=AsyncMemoizer();
-  final myApi=API();
   @override
   void initState() {
     super.initState();
@@ -100,7 +98,7 @@ class _MyHomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(bottom: 10, top: 15),
             constraints: const BoxConstraints.expand(),
             child: FutureBuilder(
-              future: myApi.getTask("todos", context),
+              future: Provider.of<ListController>(context,listen: false).getTask("todos", context),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if(snapshot.connectionState==ConnectionState.done&&snapshot.hasData){
                   var items = List.from(snapshot.data).toList();
@@ -200,7 +198,7 @@ class _MyHomePageState extends State<HomePage> {
                               log(_.toString());
                               //_toggleItem(list.items[index]);
                               var body={'title':listcontroller.list.items[index].title,'done':_};
-                              await myApi.updateTask("todos/${listcontroller.list.items[index].id}",body ,context);
+                              await listcontroller.updateTask("todos/${listcontroller.list.items[index].id}",body ,context);
                               listcontroller.toggleCheck(listcontroller.list.items[index],index,_!);
                             }catch(e){
                               log(e.toString());
@@ -228,8 +226,8 @@ class _MyHomePageState extends State<HomePage> {
                         onPressed: () async{
                           //_clearStorage(list.items[index].title);
                           try{
-                            await myApi.deleteTask("todos/${listcontroller.list.items[index].id}", context);
-                            listcontroller.delete(index);
+                            await listcontroller.deleteTask("todos/${listcontroller.list.items[index].id}", context);
+                            listcontroller.deleteItem(index);
                           }catch(e){
                             log(e.toString());
                           }
