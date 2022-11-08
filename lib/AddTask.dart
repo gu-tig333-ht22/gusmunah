@@ -22,27 +22,20 @@ class _AddTaskState extends State<AddTask> {
   final LocalStorage storage = LocalStorage('todo_app.json');
   TextEditingController controller = TextEditingController();
 
-  _addItem(String title) {
-    var listcontroller=Provider.of<ListController>(context,listen: false);
-    final item = TodoItem(title: title, done: false,id: "");
-    listcontroller.addItem(item);
-  }
   void _save(BuildContext context)async {
     try{
       if (controller.value.text.isNotEmpty) {
         await Provider.of<ListController>(context,listen: false).addTask("todos", {'title':controller.value.text,'done':false}, context);
-        _addItem(controller.value.text);
         const snackBar = SnackBar(
           backgroundColor: Colors.green,
           content: Text('Task Added Successfully'),
         );
-
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route) => false);
       } else {
         const snackBar = SnackBar(
           content: Text('Please enter the any task'),
         );
-
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }catch(e){
@@ -110,7 +103,6 @@ class _AddTaskState extends State<AddTask> {
               GestureDetector(
                 onTap: () {
                   _save(context);
-                  Navigator.pop(context);
                 },
                 child: Container(
                   margin: const EdgeInsets.only(left: 140, top: 40),

@@ -26,7 +26,6 @@ class _MyHomePageState extends State<HomePage> {
   final LocalStorage storage = LocalStorage('todo_app.json');
   bool initialized = false;
   TextEditingController controller = TextEditingController();
-  AsyncMemoizer asyncMemoizer=AsyncMemoizer();
   @override
   void initState() {
     super.initState();
@@ -51,7 +50,7 @@ class _MyHomePageState extends State<HomePage> {
     double WIDTH=MediaQuery.of(context).size.width;
     return Scaffold(
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.grey.shade400,
+          backgroundColor: primaryColor,
           onPressed: () async{
             Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask()));
           },
@@ -79,7 +78,6 @@ class _MyHomePageState extends State<HomePage> {
           header: const ClassicHeader(),
           footer: const ClassicFooter(),
           onRefresh: () async {
-            asyncMemoizer= AsyncMemoizer();
             setState(() {});
             _controller.finishRefresh();
             _controller.resetFooter();
